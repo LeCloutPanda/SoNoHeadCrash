@@ -52,17 +52,17 @@
       <HintPath Condition="Exists('$(GamePath)0Harmony.dll')">$(GamePath)0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Elements.Core">
-      <HintPath>$(GamePath)Resonite_Data\Managed\Elements.Core.dll</HintPath>
+      <HintPath>$(GamePath)Headless\Elements.Core.dll</HintPath>
     </Reference>
     <Reference Include="FrooxEngine">
-      <HintPath>$(GamePath)Resonite_Data\Managed\FrooxEngine.dll</HintPath>
+      <HintPath>$(GamePath)Headless\FrooxEngine.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(GamePath)Resonite_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="ResoniteModLoader">
       <HintPath>$(GamePath)ResoniteModLoader.dll</HintPath>
-      <HintPath>$(GamePath)Libraries\ResoniteModLoader.dll</HintPath>
+      <HintPath>$(GamePath)Headless\Libraries\ResoniteModLoader.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
