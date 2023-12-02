@@ -9,6 +9,12 @@ namespace SoNoHeadCrash
     /* Credits
      * CoolyMike(https://github.com/coolymike) and Raidriar(https://github.com/Raidriar796) for the name suggestion
      * CoolyMike(https://github.com/coolymike), JanoshcABR(https://github.com/JanoschABR) for helping me to test it
+     * Cyro(https://github.com/RileyGuy) for enlightening me and helping me figure ScaleCompensation bull shittery
+     */
+
+    /* Warnings
+     * If you run this and your headless corrupts, I am not to blame, this software is provided as is.
+     * If you run this on your client rather then a Headless do not put a issue about shit not working, it isn't made for you.
      */
 
     public static class ModInfo
@@ -18,7 +24,7 @@ namespace SoNoHeadCrash
         public const string COMPANY = "Pandas Hell Hole";
         public const string URL = "https://github.com/LeCloutPanda/SoNoHeadCrash/";
         public const string AUTHOR = "LeCloutPanda";
-        public const string VERSION = "0.0.1";
+        public const string VERSION = "1.0.1";
     }
 
     public class Patch : ResoniteMod
@@ -48,13 +54,16 @@ namespace SoNoHeadCrash
             [HarmonyPrefix]
             public static void Prefix(InteractionHandler __instance, ITool tooltip, ref bool popOff)
             {
+                if (__instance.LocalUser.HeadDevice != HeadOutputDevice.Headless) return;
+                if (!__instance.LocalUser.IsHost) return;
+
                 if (!config.GetValue(FIX_479)) return;
-                
+
+
                 if (__instance.World.HostUser.HeadDevice == HeadOutputDevice.Headless)
                 {
                     popOff = false;
                     Msg("Prevented a Headless crash.");
-                
                 }
                 else
                 {
@@ -71,12 +80,15 @@ namespace SoNoHeadCrash
             [HarmonyPostfix]
             public static void Postfix(Slider __instance)
             {
+                if (__instance.LocalUser.HeadDevice != HeadOutputDevice.Headless) return;
+                if (!__instance.LocalUser.IsHost) return;
+                
+                if (!config.GetValue(FIX_399)) return;
+
                 __instance.RunInUpdates(3, () =>
                 {
-                    if (!config.GetValue(FIX_399)) return;
-
                     __instance.DontDrive.Value = true;
-                    Msg($"Set DontDrive for {__instance.ReferenceID} to true.");
+                    Msg($"Set DontDrive for Slider with RefID: {__instance.ReferenceID} to true.");
                 });
             }
         }
@@ -88,24 +100,26 @@ namespace SoNoHeadCrash
             [HarmonyPostfix]
             public static void Postfix(Slider __instance)
             {
+                if (__instance.LocalUser.HeadDevice != HeadOutputDevice.Headless) return;
+                if (!__instance.LocalUser.IsHost) return;
+
+                if (!config.GetValue(FIX_399)) return;
+
                 __instance.RunInUpdates(3, () =>
                 {
-                    if (!config.GetValue(FIX_399)) return;
-
                     __instance.DontDrive.Value = true;
-                    Msg($"Set DontDrive for {__instance.ReferenceID} to true.");
+                    Msg($"Set DontDrive for Joint with RefID: {__instance.ReferenceID} to true.");
                 });
             }
         }
 
-        // Not an issue yet
-        // Not working, needs valueUserOverride
-        [HarmonyPatch(typeof(AvatarAudioOutputManager), nameof(AvatarAudioOutputManager.OnEquip))]
+        [HarmonyPatch(typeof(AvatarAudioOutputManager), "OnAwake")]
         private static class FIX_SCALECOMP_PATCH
         {
             [HarmonyPostfix]
             public static void Postfix(AvatarAudioOutputManager __instance, Sync<float> ____scaleCompensation)
             {
+                if (__instance.LocalUser.HeadDevice != HeadOutputDevice.Headless) return;
                 if (!config.GetValue(FIX_SCALECOMP)) return;
 
                 __instance.RunInUpdates(3, () =>
